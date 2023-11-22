@@ -14,7 +14,7 @@ return new class extends Migration {
 			$table->id();
 			$table->unsignedBigInteger("room_id")->unique();
 
-			$table->foreignId("created_by")->constrained("user", "account_id");
+			$table->foreignId("created_by")->constrained("user", "account_id")->cascadeOnUpdate()->cascadeOnDelete();
 			$table->string("name");
 			$table->text("desc");
 			$table->text("image");
