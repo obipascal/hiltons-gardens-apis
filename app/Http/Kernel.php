@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\EscapeRequestParams;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -14,7 +15,12 @@ class Kernel extends HttpKernel
 	 *
 	 * @var string[]
 	 */
-	protected $middlewarePriority = [EscapeRequestParams::class, \App\Http\Middleware\Authentication\DecryptToken::class, \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class];
+	protected $middlewarePriority = [
+		EscapeRequestParams::class,
+		\App\Http\Middleware\Authentication\DecryptToken::class,
+		\Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+		AdminMiddleware::class,
+	];
 
 	/**
 	 * The application's global HTTP middleware stack.
@@ -76,5 +82,6 @@ class Kernel extends HttpKernel
 		"signed" => \App\Http\Middleware\ValidateSignature::class,
 		"throttle" => \Illuminate\Routing\Middleware\ThrottleRequests::class,
 		"verified" => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+		"admin" => AdminMiddleware::class,
 	];
 }

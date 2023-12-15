@@ -14,15 +14,12 @@ return new class extends Migration {
 			$table->id();
 			$table->unsignedBigInteger("room_id")->unique();
 
-			$table
-				->foreignId("created_by")
-				->constrained("users", "account_id")
-				->cascadeOnUpdate()
-				->cascadeOnDelete();
 			$table->string("name");
 			$table->text("desc");
 			$table->text("image");
+			$table->float("price")->default(0);
 			$table->text("images")->nullable();
+			$table->enum("status", ["active", "suspended"])->default("active");
 
 			$table->timestamps();
 		});
