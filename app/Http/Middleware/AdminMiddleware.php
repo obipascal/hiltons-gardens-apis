@@ -22,7 +22,7 @@ class AdminMiddleware
 			return $this->terminateRequest("Access unauthorized.", null, 403);
 		}
 
-		if ($user->role !== UsersTypes::ADMIN->value || $user->role !== UsersTypes::SUPPER->value) {
+		if ($user->role !== UsersTypes::ADMIN->value && $user->role !== UsersTypes::SUPPER->value) {
 			return $this->terminateRequest("You do not have sufficient privileges to complete this action.", null, 403);
 		}
 
