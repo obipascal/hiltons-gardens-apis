@@ -1129,3 +1129,22 @@ if (!function_exists("splitAndFormatNumber")) {
 		return $formattedNumber;
 	}
 }
+
+if (!function_exists("getReference")) {
+	/**
+	 * Generate a unique alpha numeric reference
+	 *
+	 * @param string $prefix
+	 * @param int $len
+	 *
+	 * @return string
+	 */
+	function getReference(string $prefix = "", int $len = 10): string
+	{
+		if (!empty($prefix)) {
+			$prefix = str_contains($prefix, "_") ? $prefix : $prefix . "_";
+		}
+
+		return $prefix . random_string("alnum", $len);
+	}
+}

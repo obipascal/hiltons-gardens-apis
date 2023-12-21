@@ -19,7 +19,7 @@ return new class extends Migration {
 			$table->text("image");
 			$table->float("price")->default(0);
 			$table->text("images")->nullable();
-			$table->enum("status", ["active", "suspended"])->default("active");
+			$table->enum("status", ["active", "suspended", "reserved"])->default("active");
 
 			$table->timestamps();
 		});

@@ -1,27 +1,27 @@
-<?php namespace App\Http\Modules\Rooms;
+<?php namespace App\Http\Modules\Bookings;
 
 use App\Http\Modules\Core\BaseModule;
-use App\Models\Rooms\HotelRooms;
+use App\Models\Bookings\Bookings;
 use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\Log;
 
 use function App\Utilities\random_id;
 
-class HotelRoomsModule
+class BookingsModule
 {
 	use BaseModule;
 
-	public function create(array $params): bool|null|HotelRooms
+	public function create(array $params): bool|null|Bookings
 	{
 		try {
-			$params["room_id"] = random_id();
+			$params["booking_id"] = random_id();
 
-			if (!$this->__save(new HotelRooms(), $params)) {
+			if (!$this->__save(new Bookings(), $params)) {
 				return false;
 			}
 
-			return $this->get($params["room_id"]);
+			return $this->get($params["booking_id"]);
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
 			return false;
@@ -31,22 +31,22 @@ class HotelRoomsModule
 	public function update(string $id, array $params): bool
 	{
 		try {
-			if (!($room = $this->get($id))) {
+			if (!($booking = $this->get($id))) {
 				return false;
 			}
 
-			return $this->__update($room, "room_id", $room->room_id, $params);
+			return $this->__update($booking, "booking_id", $booking->booking_id, $params);
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
 			return false;
 		}
 	}
 
-	public function get(string $id): bool|null|HotelRooms
+	public function get(string $id): bool|null|Bookings
 	{
 		try {
-			return HotelRooms::query()
-				->where("room_id", $id)
+			return Bookings::query()
+				->where("booking_id", $id)
 				->first();
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
@@ -57,7 +57,7 @@ class HotelRoomsModule
 	public function all(int $perPage = 50): bool|Paginator
 	{
 		try {
-			return HotelRooms::query()
+			return Bookings::query()
 				->latest()
 				->simplePaginate($perPage);
 		} catch (Exception $th) {
@@ -69,25 +69,11 @@ class HotelRoomsModule
 	public function delete(string $id): bool
 	{
 		try {
-			if (!($room = $this->get($id))) {
+			if (!($booking = $this->get($id))) {
 				return false;
 			}
 
-			return $this->__delete($room, "room_id", $room->room_id);
-		} catch (Exception $th) {
-			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
-			return false;
-		}
-	}
-
-	public function canBook(string $id): bool
-	{
-		try {
-			if (!($room = $this->get($id))) {
-				return false;
-			}
-
-			return $room->status === "active" && $room->status !== "reserved";
+			return $this->__delete($booking, "booking_id", $booking->booking_id);
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
 			return false;

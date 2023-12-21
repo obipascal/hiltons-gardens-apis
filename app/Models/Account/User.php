@@ -4,6 +4,7 @@ namespace App\Models\Account;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Models\Payments\PaymentMethods;
 use App\Models\Verification\OTP;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,12 @@ class User extends Authenticatable
 {
 	use HasApiTokens, HasFactory, Notifiable;
 
+	/**
+	 * Retrieve default relationships
+	 *
+	 *
+	 */
+	protected $with = ["billing"];
 	/**
 	 * The attributes that are mass assignable.
 	 *
@@ -48,5 +55,10 @@ class User extends Authenticatable
 	public function accessToken(): Attribute
 	{
 		return Attribute::set(fn($value) => !empty($value) ? Crypt::encryptString($value) : $value);
+	}
+
+	public function billing()
+	{
+		return $this->hasOne(PaymentMethods::class, "account_id", "account_id");
 	}
 }
