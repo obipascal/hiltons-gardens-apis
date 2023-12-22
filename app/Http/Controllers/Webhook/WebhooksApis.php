@@ -27,9 +27,23 @@ class WebhooksApis extends Controller
 			Log::alert("WBH", [$payload]);
 
 			$event = $payload["event"];
+			$metadata = $payload["data"]["metadata"];
+
 			switch ($event) {
 				case "charge.success":
-					Handlers::Webhook($request)->activateCard($payload);
+					switch ($metadata["todo"]) {
+						case "addPaymentMethod":
+							Handlers::Webhook($request)->activateCard($payload);
+							# code...
+							break;
+						case "bookingCharge":
+							Handlers::Webhook($request)->confirmWebhookPayment($payload);
+							break;
+
+						default:
+							# code...
+							break;
+					}
 					break;
 
 				default:

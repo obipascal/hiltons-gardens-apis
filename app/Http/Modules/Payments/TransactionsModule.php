@@ -47,6 +47,7 @@ class TransactionsModule
 		try {
 			return Transactions::query()
 				->where("trans_id", $id)
+				->orWhere("reference", $id)
 				->first();
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
@@ -87,6 +88,20 @@ class TransactionsModule
 				->where("trans_id", $id)
 				->orWhere("reference", $id)
 				->exists();
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+			return false;
+		}
+	}
+
+	public function isSuccessful(string $id): bool
+	{
+		try {
+			if (!($trans = $this->get($id))) {
+				return false;
+			}
+
+			return $trans->status === "success";
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
 			return false;

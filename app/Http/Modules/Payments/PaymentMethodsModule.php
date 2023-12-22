@@ -1,6 +1,7 @@
 <?php namespace App\Http\Modules\Payments;
 
 use App\Models\Payments\PaymentMethods;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -107,6 +108,23 @@ trait PaymentMethodsModule
 			return PaymentMethods::query()
 				->where("account_id", $id)
 				->exists();
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+			return false;
+		}
+	}
+
+	public function payMethodIsValid(string $id): bool
+	{
+		try {
+			if (!($payMethod = $this->getPayMethod($id))) {
+				return false;
+			}
+
+			$currentDate = Carbon::now();
+			$cardDate = Carbon::createFromDate("01-{$payMethod->exp_month}-{$payMethod->exp_year}");
+
+			return $payMethod->status === "active" && $cardDate >= $currentDate;
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
 			return false;

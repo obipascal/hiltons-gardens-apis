@@ -77,4 +77,131 @@ class WebhooksHandler
 			return $this->raise($th->getMessage(), null, 400);
 		}
 	}
+
+	public function confirmWebhookPayment(array $payload)
+	{
+		try {
+			$params = $this->request->all([""]);
+
+			// Get the payload data
+			$data = $payload["data"];
+			// Get the metadata
+			$metadata = $data["metadata"];
+
+			// Check if transaction exist
+			if (!Modules::Payments()->exists($data["reference"])) {
+				return $this->raise("Invalid transaction");
+			}
+
+			// Get transaction
+			$trans = Modules::Payments()->get($data["reference"]);
+			// Get booking
+			$booking = Modules::Bookings()->get($trans->booking_id);
+			// Get user
+			$user = Modules::User()->get($booking->account_id);
+
+			// Check if the transaction has already been handled
+			if (Modules::Payments()->isSuccessful($data["reference"])) {
+				return $this->raise("Transaction already handled.");
+			}
+
+			// Check if the payment was for booking charges
+			if (!empty($metadata)) {
+				if ($metadata["todo"] !== "bookingCharge") {
+					return $this->raise("This handle can only handle booking charges.");
+				}
+			}
+
+			// Check if the transaction was successful really
+			if ($data["status"] !== "success") {
+				return $this->raise("Sorry trannsaction was {$data["status"]}");
+			}
+
+			// Update transaction status
+			if (!Modules::Payments()->update($trans->trans_id, ["status" => "success"])) {
+				return $this->raise("Unable to update transaction status.");
+			}
+
+			// Update booking
+			if (!Modules::Bookings()->update($booking->booking_id, ["status" => "active"])) {
+				return $this->raise("Unable to update booking status.");
+			}
+
+			// Update room status
+			if (!Modules::Room()->update($booking->room_id, ["status" => "reserved"])) {
+				return $this->raise("Unable to reserve room");
+			}
+
+			/**
+			 * @todo Send booking email
+			 */
+
+			$responseData = DB::transaction(function () use ($params, $user, $data, $metadata) {
+				//  Check if user has billing setup otherwise, create one if setup update only when channel is card
+				if (isset($data["authorization"])) {
+					if ($data["authorization"]["channel"] === "card") {
+						// When user already has existing card linked, swape previous card with newly selected card / used card
+						if (!empty($user->billing)) {
+							// Update billing details
+							$updateParams = [
+								"status" => "active",
+								"auth_token" => $data["authorization"]["authorization_code"],
+								"bin" => $data["authorization"]["bin"],
+								"last4" => $data["authorization"]["last4"],
+								"exp_month" => $data["authorization"]["exp_month"],
+								"exp_year" => $data["authorization"]["exp_year"],
+								"card_type" => $data["authorization"]["card_type"],
+								"bank" => $data["authorization"]["bank"],
+								"card_name" => $data["authorization"]["account_name"],
+							];
+
+							// Update the payment method
+							if (!Modules::Payments()->updatePayMethod($user->billing->pay_method_id, $updateParams)) {
+								throw new Exception("Unable to update payment method.");
+							}
+						}
+						// Create / add card used as default payment method
+						else {
+							$payMethodParams = [
+								"account_id" => $user->account_id,
+								"reference" => $data["reference"],
+								"status" => "inactive",
+								"status" => "active",
+								"auth_token" => $data["authorization"]["authorization_code"],
+								"bin" => $data["authorization"]["bin"],
+								"last4" => $data["authorization"]["last4"],
+								"exp_month" => $data["authorization"]["exp_month"],
+								"exp_year" => $data["authorization"]["exp_year"],
+								"card_type" => $data["authorization"]["card_type"],
+								"bank" => $data["authorization"]["bank"],
+								"card_name" => $data["authorization"]["account_name"],
+							];
+
+							if (!($payMethod = Modules::Payments()->createPayMethod($payMethodParams))) {
+								throw new Exception("Unable to complete database operation.");
+							}
+
+							return $payMethod;
+						}
+					}
+				}
+
+				return null;
+			}, attempts: 1);
+
+			//-----------------------------------------------------
+
+			/** Request response data */
+			$responseMessage = "Success";
+			$response["type"] = "";
+			$response["body"] = $responseData;
+			$responseCode = 200;
+
+			return $this->response($response, $responseMessage, $responseCode);
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+
+			return $this->raise($th->getMessage(), null, 400);
+		}
+	}
 }

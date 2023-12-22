@@ -47,6 +47,7 @@ class BookingsModule
 		try {
 			return Bookings::query()
 				->where("booking_id", $id)
+				->orWhere("trans_id", $id)
 				->first();
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);

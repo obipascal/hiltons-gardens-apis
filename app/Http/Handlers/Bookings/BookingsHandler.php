@@ -75,13 +75,22 @@ class BookingsHandler
 					throw new Exception("Unable to create transaction.");
 				}
 
+				// Update booking with transaction Id
+				Modules::Bookings()->update($booking->booking_id, ["trans_id" => $trans->trans_id]);
+
 				// Service request metadata
 				$metadata["metadata"]["todo"] = "bookingCharge";
 
 				// Check if user has their billing setup
 				if (!empty($user->billing)) {
-					// booking will be charged by linked card
+					// booking will be charged to linked card
+
 					try {
+						//  but first make sure its active
+						if (!Modules::Payments()->payMethodIsValid($user->billing->pay_method_id)) {
+							throw new Exception("Billing method is not activated yet.", 505);
+						}
+
 						// Initiate services request to charge user connected card
 						$service = Paystack::Transaction()->chargeAuth($trans->total, $user->email, $user->billing->auth_token, "NGN", $reference, $metadata);
 						if (!$service->success) {
