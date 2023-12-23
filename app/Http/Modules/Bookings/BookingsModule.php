@@ -67,6 +67,19 @@ class BookingsModule
 		}
 	}
 
+	public function getUserBookings(string $id, int $perPage = 50): bool|Paginator
+	{
+		try {
+			return Bookings::query()
+				->where("account_id", $id)
+				->latest()
+				->simplePaginate($perPage);
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+			return false;
+		}
+	}
+
 	public function delete(string $id): bool
 	{
 		try {

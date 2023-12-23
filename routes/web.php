@@ -1,7 +1,10 @@
 <?php
 
 use App\Mail\AccountVerificationMail;
+use App\Mail\BookingReservationDetailsMail;
+use App\Models\Bookings\Bookings;
 use Illuminate\Support\Facades\Route;
+use App\Models\Account\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,5 +18,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get("/", function () {
-	return (new AccountVerificationMail("234234"))->render();
+	$booking = Bookings::where("booking_id", "3770904316539")->first();
+	$user = User::where("account_id", $booking->account_id)->first();
+
+	return (new BookingReservationDetailsMail($user, $booking))->render();
 });

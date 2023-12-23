@@ -2,9 +2,11 @@
 
 use App\Http\Handlers\Core\BaseHandler;
 use App\Http\Modules\Modules;
+use App\Mail\BookingReservationDetailsMail;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Paystack;
 
 class WebhooksHandler
@@ -135,6 +137,14 @@ class WebhooksHandler
 			/**
 			 * @todo Send booking email
 			 */
+			// Get update booking and transaction objects
+			$trans = Modules::Payments()->get($trans->trans_id);
+			$booking = Modules::Bookings()->get($booking->booking_id);
+
+			/**
+			 * @todo Send booking details via email
+			 */
+			Mail::to($user)->send(new BookingReservationDetailsMail($user, $booking));
 
 			$responseData = DB::transaction(function () use ($params, $user, $data, $metadata) {
 				//  Check if user has billing setup otherwise, create one if setup update only when channel is card

@@ -38,6 +38,7 @@ class RouteServiceProvider extends ServiceProvider
 					base_path("routes/customs/payMethod.php"),
 					base_path("routes/customs/webhook.php"),
 					base_path("routes/customs/booking.php"),
+					base_path("routes/customs/users.php"),
 				]);
 
 			Route::middleware("web")->group(base_path("routes/web.php"));

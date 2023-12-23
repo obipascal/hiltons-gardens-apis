@@ -2,11 +2,14 @@
 
 use App\Http\Handlers\Core\BaseHandler;
 use App\Http\Modules\Modules;
+use App\Mail\BookingReservationDetailsMail;
 use App\Models\Account\User;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Paystack;
 
 use function App\Utilities\getReference;
@@ -120,14 +123,17 @@ class BookingsHandler
 							throw new Exception("Payment completed, but unable to process booking status.");
 						}
 
-						/**
-						 * @todo Send booking details via email
-						 */
+						// Get update booking and transaction objects
+						$trans = Modules::Payments()->get($trans->trans_id);
+						$booking = Modules::Bookings()->get($booking->booking_id);
+
+						// Send booking details via email
+						Mail::to($user)->send(new BookingReservationDetailsMail($user, $booking));
 
 						//  Return the response data
 						return [
-							"transaction" => Modules::Payments()->get($trans->trans_id),
-							"booking" => Modules::Bookings()->get($booking->booking_id),
+							"transaction" => $trans,
+							"booking" => $booking,
 							"authorization_link" => null,
 						];
 					} catch (Exception $th) {
@@ -168,6 +174,69 @@ class BookingsHandler
 
 			/** Request response data */
 			$responseMessage = "Success";
+			$response["type"] = "";
+			$response["body"] = $responseData;
+			$responseCode = 200;
+
+			return $this->response($response, $responseMessage, $responseCode);
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+
+			return $this->raise($th->getMessage(), null, 400);
+		}
+	}
+
+	public function fetchBookings()
+	{
+		try {
+			$params = $this->request->all([""]);
+
+			// Get the active auth user
+			/** @var User */
+			$user = $this->request->user();
+
+			// Get number of records to return
+			$perPage = $this->request->get("perPage") ?? 100;
+
+			/** @var Collection */
+			if (!($responseData = Modules::Bookings()->getUserBookings($user->account_id, $perPage))) {
+				return $this->raise("Unable to retrieve user bookings.");
+			}
+
+			$responseData->each(function ($booking) {
+				$booking->checkin_formatted = Carbon::createFromDate($booking->checkin)->toFormattedDayDateString();
+				$booking->checkout_formatted = Carbon::createFromDate($booking->checkout)->toFormattedDayDateString();
+			});
+
+			//-----------------------------------------------------
+
+			/** Request response data */
+			$responseMessage = "User bookings retrieved";
+			$response["type"] = "";
+			$response["body"] = $responseData;
+			$responseCode = 200;
+
+			return $this->response($response, $responseMessage, $responseCode);
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+
+			return $this->raise($th->getMessage(), null, 400);
+		}
+	}
+
+	public function fetchBooking(string $id)
+	{
+		try {
+			$params = $this->request->all([""]);
+
+			$responseData = Modules::Bookings()->get($id);
+
+			$responseData->checkin_formatted = Carbon::createFromDate($responseData->checkin)->toFormattedDayDateString();
+			$responseData->checkout_formatted = Carbon::createFromDate($responseData->checkout)->toFormattedDayDateString();
+			//-----------------------------------------------------
+
+			/** Request response data */
+			$responseMessage = "Booking retrieved";
 			$response["type"] = "";
 			$response["body"] = $responseData;
 			$responseCode = 200;
