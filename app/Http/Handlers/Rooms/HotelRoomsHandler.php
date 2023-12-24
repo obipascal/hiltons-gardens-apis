@@ -128,7 +128,7 @@ class HotelRoomsHandler
 	public function createRoom()
 	{
 		try {
-			$params = $this->request->all(["name", "desc", "price"]);
+			$params = $this->request->all(["name", "desc", "about", "price"]);
 
 			// Step 1: Upload
 			if (!is_string($image = $this->processImageUpload())) {
@@ -165,7 +165,7 @@ class HotelRoomsHandler
 	public function updateRoom(string $id)
 	{
 		try {
-			$params = $this->request->all(["name", "desc", "price"]);
+			$params = $this->request->all(["name", "desc", "about", "price"]);
 
 			$responseData = DB::transaction(function () use ($params, $id) {
 				// Step 3: Update room

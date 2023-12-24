@@ -57,6 +57,7 @@ class HotelRoomsApis extends Controller
 			$validator = Validator::make($request->all(), [
 				"name" => ["bail", "string", "required", "unique:hotel_rooms,name"],
 				"desc" => ["bail", "string", "required"],
+				"about" => ["bail", "string", "required"],
 				"price" => ["bail", "string", "required"],
 				"image" => ["bail", "image", "required", "mimes:png,jpg,jpeg"],
 			]);
@@ -134,6 +135,7 @@ class HotelRoomsApis extends Controller
 					"room_id" => ["bail", "numeric", "required", "exists:hotel_rooms,room_id"],
 					"name" => ["bail", "string", "required", "unique:hotel_rooms,name"],
 					"desc" => ["bail", "string", "required"],
+					"about" => ["bail", "string", "nullable"],
 					"price" => ["bail", "string", "required"],
 				]
 			);

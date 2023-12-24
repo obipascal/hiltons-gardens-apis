@@ -15,7 +15,8 @@ return new class extends Migration {
 			$table->unsignedBigInteger("room_id")->unique();
 
 			$table->string("name");
-			$table->text("desc");
+			$table->string("desc");
+			$table->text("about")->nullable();
 			$table->text("image");
 			$table->float("price")->default(0);
 			$table->text("images")->nullable();
