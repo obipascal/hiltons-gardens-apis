@@ -19,7 +19,7 @@ return new class extends Migration {
 				->cascadeOnUpdate()
 				->cascadeOnDelete();
 
-			$table->enum("status", ["pending", "success", "failed", "abandoned"])->default("pending");
+			$table->enum("status", ["pending", "success", "failed", "abandoned", "refund"])->default("pending");
 			$table->string("reference")->unique();
 			$table->float("amount")->default(0);
 			$table->float("discount")->default(0);

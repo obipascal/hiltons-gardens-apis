@@ -27,29 +27,33 @@ class WebhooksApis extends Controller
 			Log::alert("WBH", [$payload]);
 
 			$event = $payload["event"];
-			$metadata = $payload["data"]["metadata"];
+			$data = $payload["data"];
+            if($metadata = $data['metadata'] ?? false)
+            {
+                switch ($event) {
+                    case "charge.success":
+                        switch ($metadata["todo"]) {
+                            case "addPaymentMethod":
+                                Handlers::Webhook($request)->activateCard($payload);
+                                # code...
+                                break;
+                            case "bookingCharge":
+                                Handlers::Webhook($request)->confirmWebhookPayment($payload);
+                                break;
 
-			switch ($event) {
-				case "charge.success":
-					switch ($metadata["todo"]) {
-						case "addPaymentMethod":
-							Handlers::Webhook($request)->activateCard($payload);
-							# code...
-							break;
-						case "bookingCharge":
-							Handlers::Webhook($request)->confirmWebhookPayment($payload);
-							break;
+                            default:
+                                # code...
+                                break;
+                        }
+                        break;
 
-						default:
-							# code...
-							break;
-					}
-					break;
+                    default:
+                        # code...
+                        break;
+                }
+            }
 
-				default:
-					# code...
-					break;
-			}
+
 
 			/* Finally all went well return the response to caller/client */
 			return $this->sendResponse(null, "Event recieved.");

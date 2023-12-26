@@ -30,7 +30,7 @@ return new class extends Migration {
 			$table->integer("num_rooms")->default(1);
 			$table->dateTime("checkin")->nullable();
 			$table->dateTime("checkout")->nullable();
-			$table->enum("status", ["pending", "active", "completed", "cancled"])->default("pending");
+			$table->enum("status", ["pending", "active", "completed", "canceled"])->default("pending");
 			$table->timestamps();
 		});
 	}

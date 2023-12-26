@@ -114,4 +114,17 @@ class UsersModule
 			return false;
 		}
 	}
+
+	public function exists(string $id): bool
+	{
+		try {
+			return User::query()
+				->where("account_id", $id)
+				->orWhere("email", $id)
+				->exists();
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+			return false;
+		}
+	}
 }

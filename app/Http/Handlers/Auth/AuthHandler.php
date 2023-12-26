@@ -64,6 +64,50 @@ class AuthHandler
 		}
 	}
 
+	public function createUserViaWeb()
+	{
+		try {
+			$params = $this->request->all(["first_name", "last_name", "phone_number", "email", "password"]);
+
+			// assign the user role base on provided value
+			$params["role"] = "user";
+
+			// Check if the user exists
+			if (Modules::User()->exists($params["email"])) {
+				$user = Modules::User()->get($params["email"]);
+				$user->api_token = $user->access_token;
+
+				$responseData = $user;
+			} else {
+				$responseData = DB::transaction(function () use ($params) {
+					/* create user  */
+					if (!($User = Modules::User()->create($params))) {
+						throw new Exception("Could not create a new user account.");
+					}
+
+					// Get the user api token
+					$User->api_token = $User->access_token;
+
+					return $User;
+				}, attempts: 1);
+			}
+
+			//-----------------------------------------------------
+
+			/** Request response data */
+			$responseMessage = "Account created successfully, we've sent you a verification code to your email.";
+			$response["type"] = "";
+			$response["body"] = $responseData;
+			$responseCode = Modules::User()->exists($params["email"]) ? 200 : 201;
+
+			return $this->response($response, $responseMessage, $responseCode);
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+
+			return $this->raise($th->getMessage(), null, 400);
+		}
+	}
+
 	public function resendUserVerificatonCode(string $id)
 	{
 		try {
@@ -321,6 +365,8 @@ class AuthHandler
 			/* make sure user has verify their account. */
 			if (!$User->is_verified) {
 				$this->resendUserVerificatonCode($User->account_id);
+
+                return $this->raise("Please verify your account to continue.", $User);
 			}
 
 			/* The client should check the `verified_at` property to redirect user to verification screen and enter onboarding flow */

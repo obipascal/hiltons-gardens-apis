@@ -14,6 +14,11 @@ Route::group(["prefix" => "v1", "controller" => UserAuthApis::class], function (
 		 */
 		Route::post("user", "createUserAccount");
 		/**
+		 * @todo Create new user account via web
+		 * @api /api/v1/auth/create/web/user
+		 */
+		Route::post("web/user", "createUserAccountViaWeb");
+		/**
 		 * @todo Create new admin account
 		 * @api /api/v1/auth/create/admin
 		 */

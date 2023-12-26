@@ -248,4 +248,84 @@ class BookingsHandler
 			return $this->raise($th->getMessage(), null, 400);
 		}
 	}
+
+	public function cancelBooking(string $id)
+	{
+		try {
+			$params = $this->request->all([""]);
+
+			// Get the booking
+			$booking = Modules::Bookings()->get($id);
+
+			// make sure booking is still active
+			if ($booking->status !== "active") {
+				return $this->raise("Sorry this booking has been {$booking->status}.");
+			}
+
+			// calculate the checkin and checkout date diff
+			$checkinDate = Carbon::createFromDate($booking->checkin);
+			$checkoutDate = Carbon::createFromDate($booking->checkout);
+			$bookingDateInterv = $checkinDate->diff($checkoutDate);
+
+			// Make sure the check-in time is at least 1 hour ahead of cancelation
+			$now = Carbon::now();
+			$checkin = Carbon::createFromDate($booking->checkin);
+			$interval = $checkin->diff($now);
+
+			// Now when their diff in days is greater than or equals 1, cancelation should
+			// happen in less than a day to booking time otherwise 1 hour to booking time
+			if ($bookingDateInterv->d > 1) {
+				// If the cancelation date is the same as booking date terminate operation
+				if ($checkinDate->isToday()) {
+					return $this->raise("Booking can no longer be canceled.");
+				}
+
+				if (!($interval->d >= 1)) {
+					return $this->raise("Sorry booking can only be canceled a day ahead of check-in date.");
+				}
+			} else {
+				// When booking diff is hourly
+				if (!($interval->h >= 1)) {
+					return $this->raise("Sorry booking can only be canceled 1 hour ahead of check-in time.");
+				}
+			}
+
+			// Initiate a refund
+			$service = Paystack::Transaction()->createRefunds($booking->transaction->reference);
+			if (!$service->success) {
+				return $this->raise("Sorry we could not initiate a refund to your card or bank account.");
+			}
+
+			// Update booking status
+			if (!Modules::Bookings()->update($id, ["status" => "canceled"])) {
+				return $this->raise("Refund successful! But could not update booking.");
+			}
+
+			// Update transaction status
+			if (!Modules::Payments()->update($booking->trans_id, ["status" => "refund"])) {
+				return $this->raise("Refund successful! But could not update payment status.");
+			}
+
+			// Update room
+			if (!Modules::Room()->update($booking->room_id, ["status" => "active"])) {
+				return $this->raise("Refund successful! But could not reactivate room.");
+			}
+
+			$responseData = null;
+
+			//-----------------------------------------------------
+
+			/** Request response data */
+			$responseMessage = "Booking has been successfully canceled.";
+			$response["type"] = "";
+			$response["body"] = $responseData;
+			$responseCode = 204;
+
+			return $this->response($response, $responseMessage, $responseCode);
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+
+			return $this->raise($th->getMessage(), null, 400);
+		}
+	}
 }
