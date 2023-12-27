@@ -9,6 +9,12 @@ Route::group(["prefix" => "v1", "middleware" => ["auth:sanctum", "admin"]], func
 	 */
 	Route::group(["prefix" => "rooms", "controller" => HotelRoomsApis::class], function () {
 		/**
+		 * @todo Fetch room from public accable
+		 * @api /api/v1/rooms
+		 */
+		Route::get("/", "index")->withoutMiddleware(["auth:sanctum"]);
+
+		/**
 		 * @todo Update room image
 		 * @api /api/v1/rooms/image/:id
 		 */
