@@ -8,11 +8,7 @@ Route::group(["prefix" => "v1", "middleware" => ["auth:sanctum", "admin"]], func
 	 * @todo Custome endpoints
 	 */
 	Route::group(["prefix" => "rooms", "controller" => HotelRoomsApis::class], function () {
-		/**
-		 * @todo Fetch room from public accable
-		 * @api /api/v1/rooms
-		 */
-		Route::get("/", "index")->withoutMiddleware(["auth:sanctum"]);
+
 
 		/**
 		 * @todo Update room image
@@ -37,5 +33,5 @@ Route::group(["prefix" => "v1", "middleware" => ["auth:sanctum", "admin"]], func
 	Route::apiResource("rooms", HotelRoomsApis::class)->only(["store", "destroy", "update"]);
 	Route::apiResource("rooms", HotelRoomsApis::class)
 		->except(["store", "destroy", "update"])
-		->withoutMiddleware("admin");
+		->withoutMiddleware(["admin", 'auth:sanctum']);
 });
