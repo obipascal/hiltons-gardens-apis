@@ -33,6 +33,10 @@ class BookingsHandler
 			$checkin = Carbon::createFromDate($params["checkin"]);
 			$checkout = Carbon::createFromDate($params["checkout"]);
 
+			// swap dates params
+			$params["checkin"] = $checkin->toDateTimeString();
+			$params["checkout"] = $checkout->toDateTimeString();
+
 			if (!($checkout > $checkin)) {
 				return $this->raise("Sorry check-in date/time must be ahead of check-out date/time.");
 			}
