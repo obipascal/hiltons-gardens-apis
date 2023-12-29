@@ -83,6 +83,7 @@ class BookingsHandler
 
 				// Service request metadata
 				$metadata["metadata"]["todo"] = "bookingCharge";
+				$metadata["callback_url"] = "https://app.hiltongarden.org/booking/{$booking->room->room_id}/confirm";
 
 				// Check if user has their billing setup
 				if (!empty($user->billing)) {
