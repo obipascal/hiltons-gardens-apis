@@ -328,4 +328,50 @@ class BookingsHandler
 			return $this->raise($th->getMessage(), null, 400);
 		}
 	}
+
+	public function expireBookings()
+	{
+		try {
+			$params = $this->request->all([""]);
+
+			// Fetch all bookings
+			$bookings = Modules::Bookings()->getReservedBookings();
+			if (!($bookings->count() > 0)) {
+				return $this->raise("No bookings");
+			}
+
+			// Loop to validate expiration date and re-activate booking and room
+
+			$bookings->each(function ($booking) {
+				// get the time for today
+				$today = Carbon::now();
+				$checkoutDate = Carbon::createFromDate($booking->checkout);
+
+				// expire booking if the checkout date is in the past
+				if ($today > $checkoutDate) {
+					// reactivate room
+					Modules::Room()->update($booking->room_id, ["status", "active"]);
+
+					// mark booking as completed
+					Modules::Bookings()->update($booking->booking_id, ["status", "completed"]);
+				}
+			});
+
+			$responseData = null;
+
+			//-----------------------------------------------------
+
+			/** Request response data */
+			$responseMessage = "Success";
+			$response["type"] = "";
+			$response["body"] = $responseData;
+			$responseCode = 200;
+
+			return $this->response($response, $responseMessage, $responseCode);
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+
+			return $this->raise($th->getMessage(), null, 400);
+		}
+	}
 }

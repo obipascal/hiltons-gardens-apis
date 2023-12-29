@@ -4,6 +4,7 @@ use App\Http\Modules\Core\BaseModule;
 use App\Models\Bookings\Bookings;
 use Exception;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 use function App\Utilities\random_id;
@@ -67,6 +68,15 @@ class BookingsModule
 		}
 	}
 
+	public function getReservedBookings(): Collection
+	{
+		try {
+			return Bookings::where("status", "reserved")->all();
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+			return false;
+		}
+	}
 	public function getUserBookings(string $id, int $perPage = 50): bool|Paginator
 	{
 		try {
