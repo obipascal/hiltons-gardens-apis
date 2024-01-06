@@ -40,6 +40,7 @@ class RouteServiceProvider extends ServiceProvider
 					base_path("routes/customs/booking.php"),
 					base_path("routes/customs/users.php"),
 					base_path("routes/customs/transaction.php"),
+					base_path("routes/customs/misc.php"),
 				]);
 
 			Route::middleware("web")->group(base_path("routes/web.php"));

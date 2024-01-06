@@ -1,6 +1,8 @@
 <?php namespace App\Http\Modules;
 
 use App\Http\Modules\Bookings\BookingsModule;
+use App\Http\Modules\Misc\FavoriteModule;
+use App\Http\Modules\Misc\ReviewsModule;
 use App\Http\Modules\Payments\TransactionsModule;
 use App\Http\Modules\Rooms\HotelRoomsModule;
 use App\Http\Modules\Security\OTPModule;
@@ -31,5 +33,15 @@ class Modules
 	public static function Payments()
 	{
 		return new TransactionsModule();
+	}
+
+	public static function Reviews()
+	{
+		return new ReviewsModule();
+	}
+
+	public static function Favorites()
+	{
+		return new FavoriteModule();
 	}
 }

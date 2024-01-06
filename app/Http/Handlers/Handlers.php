@@ -2,6 +2,8 @@
 
 use App\Http\Handlers\Auth\AuthHandler;
 use App\Http\Handlers\Bookings\BookingsHandler;
+use App\Http\Handlers\Misc\FavoriteHandler;
+use App\Http\Handlers\Misc\ReviewHandler;
 use App\Http\Handlers\Rooms\HotelRoomsHandler;
 use App\Http\Handlers\Users\UsersHandler;
 use App\Http\Handlers\Webhooks\WebhooksHandler;
@@ -38,5 +40,15 @@ class Handlers
 	public static function Booking(Request $request)
 	{
 		return new BookingsHandler($request);
+	}
+
+	public static function Favorites(Request $request)
+	{
+		return new FavoriteHandler($request);
+	}
+
+	public static function Reviews(Request $request)
+	{
+		return new ReviewHandler($request);
 	}
 }
