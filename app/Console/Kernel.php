@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
 
 				Handlers::Booking(request())->expireBookings();
 			})
-			->hourly();
+			->everyMinute();
 	}
 
 	/**
