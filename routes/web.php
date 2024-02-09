@@ -6,6 +6,7 @@ use App\Models\Bookings\Bookings;
 use Illuminate\Support\Facades\Route;
 use App\Models\Account\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,10 +20,37 @@ use Carbon\Carbon;
 */
 
 Route::get("/", function () {
-	dd(Carbon::createFromDate("2023-12-30T11:01:00.000Z")->toDateTimeString());
 
-	$booking = Bookings::where("booking_id", "3770904316539")->first();
-	$user = User::where("account_id", $booking->account_id)->first();
-
-	return (new BookingReservationDetailsMail($user, $booking))->render();
+    return view('email.paymentcallback', ['title' => 'Payment Callback', 'verificationCode' => '123412341234']);
 });
+
+Route::get('/app-callback', function(Request $request){
+
+try {
+    $reference  = $request->get('reference');
+    $title = "Payment Callback";
+
+
+    if(!empty($reference))
+    {
+        // verify payment status
+        $paystackService = Paystack::Transaction()->verify($reference);
+        if(!$paystackService->success)
+        {
+            $title = "Unable to verify transaction.";
+        }
+
+
+        // check if transaction successed
+        if($paystackService->response->data->status === 'success' || $paystackService->response->data->status === 'reversed') {
+            $title = 'Transaction was successful';
+        }
+
+    }
+    return view('email.paymentcallback', ['title' => $title,  'reference' => $reference ?? "123412341234"]);
+} catch (Exception $th) {
+    $title = "Something went wrong while processing transaction.";
+    return view('email.paymentcallback', ['title' => $title,  'reference' => $reference ?? "123412341234"]);
+}
+
+})->name('app-callback');

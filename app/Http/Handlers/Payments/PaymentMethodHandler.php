@@ -24,6 +24,7 @@ trait PaymentMethodHandler
 
 			// Step 1: Initiate a charge of N100, which will be refunded later after card has been used.
 			$serviceParams["metadata"]["todo"] = "addPaymentMethod";
+            $serviceParams["callback_url"] = route("app-callback");
 
 			$reference = getReference("HLG");
 

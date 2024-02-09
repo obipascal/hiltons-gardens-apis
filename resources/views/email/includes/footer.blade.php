@@ -20,7 +20,8 @@
                                                 style="padding:0;Margin:0;line-height:14px;font-size:12px;color:#CCCCCC">
                                                 <p
                                                     style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:14px;color:#CCCCCC;font-size:12px">
-                                                    <br></p>
+                                                    <br>
+                                                </p>
                                             </td>
                                         </tr>
                                     </table>
@@ -52,7 +53,7 @@
                                             <td align="center" class="es-m-txt-c" style="padding:20px;Margin:0">
                                                 <p
                                                     style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px">
-                                                    © 2023 Zantic Organic Gardens Ltd All Rights Reserved</p>
+                                                    © {{ date('Y') }} Zantic Organic Gardens Ltd All Rights Reserved</p>
                                             </td>
                                         </tr>
                                         <tr>
@@ -69,26 +70,13 @@
                                                 </table>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td class="es-m-txt-c" align="center" style="padding:0;Margin:0">
-                                                <p
-                                                    style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#035e99;font-size:14px">
-                                                    <strong><a target="_blank"
-                                                            style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:none;color:#035e99;font-size:14px"
-                                                            href="https://bilmapay.com/terms">Terms and
-                                                            Conditions&nbsp;</a>|&nbsp;&nbsp;<a target="_blank"
-                                                            style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:none;color:#035e99;font-size:14px"
-                                                            href="https://bilmapay.com/privacy">Privacy&nbsp;</a>Policy<a
-                                                            target="_blank"
-                                                            style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;text-decoration:none;color:#035e99;font-size:14px"
-                                                            href=""></a></strong></p>
-                                            </td>
-                                        </tr>
+
                                         <tr>
                                             <td class="es-m-txt-c" align="center" style="padding:0;Margin:0">
                                                 <p
                                                     style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#00ce8d;font-size:14px">
-                                                    <br></p>
+                                                    <br>
+                                                </p>
                                             </td>
                                         </tr>
                                     </table>
@@ -110,7 +98,8 @@
                                             <td align="left" style="padding:0;Margin:0">
                                                 <p
                                                     style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;line-height:21px;color:#333333;font-size:14px">
-                                                    <br></p>
+                                                    <br>
+                                                </p>
                                             </td>
                                         </tr>
                                     </table>

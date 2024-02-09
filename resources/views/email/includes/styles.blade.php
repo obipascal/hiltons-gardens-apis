@@ -9,6 +9,18 @@
     text-decoration: none !important;
 }
 
+.cta-btn {
+
+    border-radius: 20px;
+    background: #ddd;
+    text-align: center;
+    display: block;
+    color: #000;
+    width: fit-content;
+    padding: 10px 20px;
+    font-size: 22px;
+}
+
 a[x-apple-data-detectors] {
     color: inherit !important;
     text-decoration: none !important;

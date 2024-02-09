@@ -232,7 +232,7 @@ class AuthHandler
 				}
 
 				if (!($OTP = Modules::OTP()->create(["account_id" => $User->account_id, "sent_to" => $User->email]))) {
-					return throw new Exception("Unable to generate account recovery code.");
+					 throw new Exception("Unable to generate account recovery code.");
 				}
 
 				// Send user verification code.
