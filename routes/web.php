@@ -29,6 +29,8 @@ Route::get('/app-callback', function(Request $request){
 try {
     $reference  = $request->get('reference');
     $title = "Payment Callback";
+    $status = false;
+
 
 
     if(!empty($reference))
@@ -38,19 +40,21 @@ try {
         if(!$paystackService->success)
         {
             $title = "Unable to verify transaction.";
+            $status = false;
         }
 
 
         // check if transaction successed
         if($paystackService->response->data->status === 'success' || $paystackService->response->data->status === 'reversed') {
             $title = 'Transaction was successful';
+            $status = true;
         }
 
     }
     return view('email.paymentcallback', ['title' => $title,  'reference' => $reference ?? "123412341234"]);
 } catch (Exception $th) {
     $title = "Something went wrong while processing transaction.";
-    return view('email.paymentcallback', ['title' => $title,  'reference' => $reference ?? "123412341234"]);
+    return view('email.paymentcallback', ['title' => $title,  'reference' => $reference ?? "123412341234", 'status' => $status ?? false]);
 }
 
 })->name('app-callback');
