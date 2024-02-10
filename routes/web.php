@@ -51,7 +51,7 @@ try {
         }
 
     }
-    return view('email.paymentcallback', ['title' => $title,  'reference' => $reference ?? "123412341234"]);
+    return view('email.paymentcallback', ['title' => $title,  'reference' => $reference ?? "123412341234", 'status' => $status ?? false]);
 } catch (Exception $th) {
     $title = "Something went wrong while processing transaction.";
     return view('email.paymentcallback', ['title' => $title,  'reference' => $reference ?? "123412341234", 'status' => $status ?? false]);
