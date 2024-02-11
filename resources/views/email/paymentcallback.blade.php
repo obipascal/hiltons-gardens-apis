@@ -37,8 +37,8 @@
                                             <td align="center" class="es-m-txt-c" style="padding:10px;Margin:0">
                                                 <h1
                                                     style="Margin:0;line-height:58px;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:48px;font-style:normal;font-weight:normal;color:#333333">
-                                                    <a href="hiltons://com.hiltonsgarden.com/?reference={{ $reference }}&status={{ $status }}" class="es-button cta-btn"
-                                                        role="button">
+                                                    <a href="hiltons://com.hiltonsgarden.com/?reference={{ $reference ?? '' }}&status={{ $status }}"
+                                                        class="es-button cta-btn" role="button">
                                                         <strong>Back to App</strong>
                                                     </a>
                                                     <p
