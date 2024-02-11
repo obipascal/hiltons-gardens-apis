@@ -71,7 +71,7 @@ class BookingsModule
 	public function getReservedBookings(): Collection
 	{
 		try {
-			return Bookings::where("status", "reserved")->get();
+			return Bookings::where("status", "active")->get();
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
 			return false;
