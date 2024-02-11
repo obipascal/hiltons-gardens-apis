@@ -355,10 +355,10 @@ class BookingsHandler
 				// expire booking if the checkout date is in the past
 				if ($today > $checkoutDate) {
 					// reactivate room
-					Modules::Room()->update($booking->room_id, ["status", "active"]);
+					Modules::Room()->update($booking->room_id, ["status" =>  "active"]);
 
 					// mark booking as completed
-					Modules::Bookings()->update($booking->booking_id, ["status", "completed"]);
+					Modules::Bookings()->update($booking->booking_id, ["status" => "completed"]);
 				}else {
                     Log::info("Booking is still active", ['HAS_EXPIRED' => $today > $checkoutDate, 'booking_id' => $booking->booking_id, 'checkout' => $booking->checkout, 'today' => $today, 'checkoutDate' => $checkoutDate]);
                 }
