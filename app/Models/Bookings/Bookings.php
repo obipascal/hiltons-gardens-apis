@@ -25,13 +25,5 @@ class Bookings extends Model
 		return $this->belongsTo(HotelRooms::class, "room_id", "room_id");
 	}
 
-	public function checkin(): Attribute
-	{
-		return Attribute::make(get: fn($value) => Carbon::createFromDate($value)->toFormattedDateString());
-	}
 
-	public function checkout(): Attribute
-	{
-		return Attribute::make(get: fn($value) => Carbon::createFromDate($value)->toFormattedDateString());
-	}
 }
