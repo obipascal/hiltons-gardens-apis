@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class Reviews extends Model
 {
     use HasFactory;
+    protected $with=["user"];
+
 
     public function user()
     {
