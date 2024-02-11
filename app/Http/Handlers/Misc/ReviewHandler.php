@@ -49,6 +49,22 @@ class ReviewHandler
 				}, attempts: 1);
 			}
 
+
+            // caludate room rating
+            $reviews = Modules::Reviews()->getForRoom($params["room_id"]);
+            // Calculate the total rating and count of reviews for the current room
+            $totalRating = $reviews->sum('rating');
+            $reviewCount = $reviews->count();
+
+             // Calculate the average rating for the current room
+            $averageRating = $reviewCount > 0 ? $totalRating / $reviewCount : 0;
+
+            // Update room rating
+            if(!Modules::Room()->update($params["room_id"], ["rating" => $averageRating])){
+                throw new Exception("Unable to update room rating");
+            }
+
+
 			//-----------------------------------------------------
 
 			/** Request response data */
