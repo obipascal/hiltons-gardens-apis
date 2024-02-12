@@ -11,7 +11,6 @@ class Reviews extends Model
     use HasFactory;
     protected $with=["user"];
 
-
     public function user()
     {
         return $this->belongsTo(User::class, "account_id", "account_id");
