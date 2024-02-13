@@ -238,6 +238,8 @@ class BookingsHandler
 
 			$responseData->checkin_formatted = Carbon::createFromDate($responseData->checkin)->toFormattedDayDateString();
 			$responseData->checkout_formatted = Carbon::createFromDate($responseData->checkout)->toFormattedDayDateString();
+            $responseData->isFavorite = Modules::Favorites()->existsForUser($responseData->room_id, $this->request->user()->account_id);
+
 			//-----------------------------------------------------
 
 			/** Request response data */
