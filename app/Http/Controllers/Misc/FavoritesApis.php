@@ -105,7 +105,7 @@ class FavoritesApis extends Controller
 			$validator = Validator::make(
 				["favorite_id" => $id],
 				[
-					"favorite_id" => ["bail", "numeric", "required", "exists:favorites,favorite_id"],
+					"favorite_id" => ["bail", "numeric", "required"],
 				]
 			);
 

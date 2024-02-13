@@ -80,19 +80,7 @@ class FavoriteModule
 		}
 	}
 
-	public function delete(string $id): bool
-	{
-		try {
-			if (!($favorite = $this->get($id))) {
-				return false;
-			}
 
-			return $this->__delete($favorite, "favorite_id", $favorite->favorite_id);
-		} catch (Exception $th) {
-			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
-			return false;
-		}
-	}
 
 	public function existsForUser(string $id, string $roomId): bool
 	{
@@ -100,6 +88,19 @@ class FavoriteModule
 			return Favorites::query()
 				->where(["room_id" => $roomId, "account_id" => $id])
 				->exists();
+		} catch (Exception $th) {
+			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+			return false;
+		}
+	}
+
+    public function delete(string $userId, string $id_or_roomId): bool
+	{
+		try {
+			return Favorites::query()
+				->where(["room_id" => $id_or_roomId, "account_id" => $userId])
+				->orWhere(["favorite_id" => $id_or_roomId, "account_id" => $userId])
+				->delete();
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
 			return false;
