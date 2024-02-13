@@ -94,6 +94,8 @@ class FavoriteModule
 		}
 	}
 
+
+
     public function deleteForUser(string $userId, string $id_or_roomId): bool
 	{
 		try {
