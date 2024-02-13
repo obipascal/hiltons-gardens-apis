@@ -94,16 +94,32 @@ class FavoriteModule
 		}
 	}
 
-    public function delete(string $userId, string $id_or_roomId): bool
+    public function deleteForUser(string $userId, string $id_or_roomId): bool
 	{
 		try {
-			return Favorites::query()
+			$item =  Favorites::query()
 				->where(["room_id" => $id_or_roomId, "account_id" => $userId])
-				->orWhere(["favorite_id" => $id_or_roomId, "account_id" => $userId])
-				->delete();
+				->orWhere("favorite_id" , $id_or_roomId)
+				->first();
+
+                if(!$item) return false;
+
+                return $this->delete($item->favorite_id);
+
 		} catch (Exception $th) {
 			Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
 			return false;
 		}
 	}
+
+    public function delete(string $id): bool
+    {
+        try {
+
+            return $this->__delete(new Favorites(), "favorite_id", $id);
+        } catch (Exception $th) {
+            Log::error($th->getMessage(), ["Line" => $th->getLine(), "file" => $th->getFile()]);
+            return false;
+        }
+    }
 }

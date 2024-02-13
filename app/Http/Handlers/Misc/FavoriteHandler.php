@@ -96,7 +96,7 @@ class FavoriteHandler
             $user = $this->request->user();
 
 
-			if (!Modules::Favorites()->delete($user->account_id, $id)) {
+			if (!Modules::Favorites()->deleteForUser($user->account_id, $id)) {
 				return $this->raise("Unable to retrieve from favorite.");
 			}
 
