@@ -203,9 +203,8 @@ class HotelRoomsHandler
 				return $this->raise("Oops, no room found with this ID.", null, 404);
 			}
             // Check if room is in user's favorite
-           if($userId) {
-
-               $responseData->isFavorite = Modules::Favorites()->existsForUser($this->request->user()->account_id, $responseData->room_id);
+           if(!empty($userId)) {
+               $responseData->isFavorite = Modules::Favorites()->existsForUser($userId, $responseData->room_id);
            }
 
 			//-----------------------------------------------------
