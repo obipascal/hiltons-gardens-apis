@@ -196,13 +196,17 @@ class HotelRoomsHandler
 	public function fetchRoom(string $id)
 	{
 		try {
-			$params = $this->request->all([""]);
+
+            $userId = $this->request->get('user_id') ?? null;
 
 			if (!($responseData = Modules::Room()->get($id))) {
 				return $this->raise("Oops, no room found with this ID.", null, 404);
 			}
             // Check if room is in user's favorite
-            $responseData->isFavorite = Modules::Favorites()->existsForUser( $this->request->user()->account_id, $responseData->room_id);
+           if($userId) {
+
+               $responseData->isFavorite = Modules::Favorites()->existsForUser($this->request->user()->account_id, $responseData->room_id);
+           }
 
 			//-----------------------------------------------------
 
@@ -229,6 +233,9 @@ class HotelRoomsHandler
 			if (!($responseData = Modules::Room()->all($perPage))) {
 				return $this->raise("Oops, no room found with this ID.", null, 404);
 			}
+
+
+
 
 			//-----------------------------------------------------
 
