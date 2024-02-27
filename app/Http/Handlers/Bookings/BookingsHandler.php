@@ -323,7 +323,7 @@ class BookingsHandler
 			//-----------------------------------------------------
 
 			/** Request response data */
-			$responseMessage = "Booking has been successfully canceled.";
+			$responseMessage = "Booking has been successfully cancelled.";
 			$response["type"] = "";
 			$response["body"] = $responseData;
 			$responseCode = 204;
