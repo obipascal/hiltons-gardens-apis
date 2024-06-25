@@ -31,6 +31,8 @@ class AuthHandler
 			// assign the user role base on provided value
 			$params["role"] = $userType;
 
+
+
 			$responseData = DB::transaction(function () use ($params) {
 				/* create user  */
 				if (!($User = Modules::User()->create($params))) {
